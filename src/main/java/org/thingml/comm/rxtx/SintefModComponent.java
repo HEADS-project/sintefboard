@@ -105,7 +105,16 @@ public class SintefModComponent implements ModelListener, Runnable,
 		service.shutdownNow();
 		try {
 			serialPort.writeBytes("reset\r\n".getBytes());
+			System.err.println("Sent reset wait to get the board restarted...");
 			serialPort.closePort();
+			
+			try {
+				Thread.sleep(5000);                 //1000 milliseconds is one second.
+			} catch(InterruptedException ex) {
+				Thread.currentThread().interrupt();
+			}			
+			System.err.println("wait ended");
+			
 		} catch (SerialPortException e) {
 			e.printStackTrace();
 		}
@@ -114,8 +123,8 @@ public class SintefModComponent implements ModelListener, Runnable,
 
 	@Update
 	public void update() {
-		this.stop();
-		this.start();
+		//this.stop();
+		//this.start();
 	}
 
 	public boolean afterLocalUpdate(UpdateContext arg0) {
