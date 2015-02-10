@@ -73,6 +73,7 @@ public class SintefModComponent implements ModelListener, Runnable,
 
 	@Start
 	public void start() {
+		System.err.println("SintefModComponent::start() enter");
 		serialPort = new SerialPort(this.serialport);
 
 		try {
@@ -98,10 +99,12 @@ public class SintefModComponent implements ModelListener, Runnable,
 		service = Executors.newSingleThreadScheduledExecutor();
 		service.scheduleAtFixedRate(this, delay, period, TimeUnit.MILLISECONDS);
 
+		System.err.println("SintefModComponent::start() leave");
 	}
 
 	@Stop
 	public void stop() {
+		System.err.println("SintefModComponent::stop() enter");
 		service.shutdownNow();
 		try {
 			serialPort.writeBytes("reset\r\n".getBytes());
@@ -119,7 +122,8 @@ public class SintefModComponent implements ModelListener, Runnable,
 			e.printStackTrace();
 		}
 		modelService.unregisterModelListener(this);
-	}
+		System.err.println("SintefModComponent::stop() leave");
+}
 
 	@Update
 	public void update() {
@@ -137,13 +141,19 @@ public class SintefModComponent implements ModelListener, Runnable,
 
 	/* Helper to create command */
 	private AdaptationPrimitive adapt(AdaptationType primitive, Object elem) {
+		System.err.println("SintefModComponent::adapt() enter");
+
 		AdaptationPrimitive ccmd = new AdaptationPrimitive();
 		ccmd.setPrimitiveType(primitive.name());
 		ccmd.setRef(elem);
+
+		System.err.println("SintefModComponent::adapt() leave");
 		return ccmd;
 	}
 
 	public boolean preUpdate(UpdateContext ctx) {
+		System.err.println("SintefModComponent::preUpdate() enter");
+
 		TraceSequence s = comp.diff(ctx.getCurrentModel(),
 				ctx.getProposedModel());
 		HashMap<String, TupleObjPrim> elementAlreadyProcessed = new HashMap<String, TupleObjPrim>();
@@ -287,15 +297,20 @@ public class SintefModComponent implements ModelListener, Runnable,
 			}
 
 		}
+		System.err.println("SintefModComponent::preUpdate() leave");
 		return true;
 	}
 
 	boolean mustRest = false;
 
 	public void modelUpdated() {
+                int loopCount = -1;
+		System.err.println("SintefModComponent::modelUpdated() enter");
 
 		for (AdaptationPrimitive p : adaptationModel.getAdaptations()) {
+                        loopCount++;
 			if (p.getPrimitiveType().equals(AdaptationType.AddInstance.name())) {
+        			System.err.println("If AddInstance..." + loopCount);
 				try {
 					System.err.println("task instantiate "
 									+ ((ComponentInstance) p.getRef())
@@ -314,13 +329,16 @@ public class SintefModComponent implements ModelListener, Runnable,
 
 					e.printStackTrace();
 				}
+        			System.err.println("...done" + loopCount);
 			} else if (p.getPrimitiveType().equals(
 					AdaptationType.RemoveInstance.name())) {
+        			System.err.println("If RemoveInstance..." + loopCount);
 				// TODO
 				System.err.println("cannot remove instance");
+        			System.err.println("...done" + loopCount);
 			} else if (p.getPrimitiveType().equals(
 					AdaptationType.AddBinding.name())) {
-				System.err.println("add binding");
+        			System.err.println("If AddBinding..." + loopCount);
 				Channel arg0 = ((MBinding) p.getRef()).getHub();
 				if (((ComponentInstance) ((Channel) arg0).getBindings().get(0)
 						.getPort().eContainer()).getTypeDefinition()
@@ -371,10 +389,12 @@ public class SintefModComponent implements ModelListener, Runnable,
 						e.printStackTrace();
 					}
 				}
+        			System.err.println("...done" + loopCount);
 			}
 
 			else if (p.getPrimitiveType().equals(
 					AdaptationType.RemoveBinding.name())) {
+        			System.err.println("If Remove Binding..." + loopCount);
 				Channel arg0 = ((MBinding) p.getRef()).getHub();
 				if (((ComponentInstance) ((Channel) arg0).getBindings().get(0)
 						.getPort().eContainer()).getTypeDefinition()
@@ -424,26 +444,36 @@ public class SintefModComponent implements ModelListener, Runnable,
 						e.printStackTrace();
 					}
 				}
+        			System.err.println("...done" + loopCount);
 			}
 		}
+
+		System.err.println("SintefModComponent::modelUpdated() 2");
 		
 		try {
 			if (adaptationModel.getAdaptations().size()>0 ){
 				System.err.println(adaptationModel.getAdaptations());
 				for (AdaptationPrimitive p1 : adaptationModel.getAdaptations())
 					System.err.println(p1.getPrimitiveType() + " " + p1.getRef());
-			serialPort.writeBytes("task create\r\n".getBytes());
+					
+					
+				System.err.println("task create\r\n");
+				serialPort.writeBytes("task create\r\n".getBytes());
 			}
 		} catch (SerialPortException e) {
 
 			e.printStackTrace();
 		}
 
+		System.err.println("SintefModComponent::modelUpdated() 3");
 		
 		for (AdaptationPrimitive p : adaptationModel.getAdaptations()) {
 			if (p.getPrimitiveType()
 					.equals(AdaptationType.StartInstance.name())) {
 				try {
+					System.err.println("task resume "
+									+ ((ComponentInstance) p.getRef())
+											.getName() + "\r\n");
 					serialPort
 							.writeBytes(("task resume "
 									+ ((ComponentInstance) p.getRef())
@@ -455,6 +485,9 @@ public class SintefModComponent implements ModelListener, Runnable,
 			} else if (p.getPrimitiveType().equals(
 					AdaptationType.StopInstance.name())) {
 				try {
+					System.err.println("task suspend "
+									+ ((ComponentInstance) p.getRef())
+											.getName() + "\r\n");
 					serialPort
 							.writeBytes(("task suspend "
 									+ ((ComponentInstance) p.getRef())
@@ -466,6 +499,7 @@ public class SintefModComponent implements ModelListener, Runnable,
 			}
 		}
 	
+		System.err.println("SintefModComponent::modelUpdated() leave");
 
 	}
 
