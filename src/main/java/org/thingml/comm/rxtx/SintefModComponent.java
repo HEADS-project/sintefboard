@@ -1,6 +1,8 @@
 package org.thingml.comm.rxtx;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +17,7 @@ import org.kevoree.ContainerNode;
 import org.kevoree.ContainerRoot;
 import org.kevoree.Instance;
 import org.kevoree.MBinding;
+import org.kevoree.Port;
 import org.kevoree.PortTypeRef;
 import org.kevoree.TypeDefinition;
 import org.kevoree.annotation.ComponentType;
@@ -582,6 +585,63 @@ public class SintefModComponent implements ModelListener, Runnable,
 			//Task type=rxlcd instance=rcv state=STARTED
 			//Taskinstance=tx port=0 ==> Taskinstance=rcv port=0 
 			//Taskinstance=rcv port=0 ==> Taskinstance=tx port=0
+
+       			if (data.startsWith("Taskinstance=") && data.contains("port=")) {
+				String[] s1 = data.replace("Taskinstance=", "").replace("port=", "").replace("==>", "").split(" ");				
+				String tx_iid =s1[0];
+				String tx_port_id="tx"+s1[1];
+				String rcv_iid =s1[3];
+				String rcv_port_id="rcv"+s1[4];
+                                System.err.println("Got channel string<" + data + ">");
+                                System.err.println("Parsed to<" + tx_iid + "><" + tx_port_id + "><" + rcv_iid + "><" + rcv_port_id + ">");
+                                
+				ComponentInstance tx_instance = r.findNodesByID("MySintefNode").findComponentsByID(tx_iid);
+				ComponentInstance rcv_instance = r.findNodesByID("MySintefNode").findComponentsByID(rcv_iid);
+                                if( (tx_instance != null) && (rcv_instance != null)) {
+                                    //PortTypeRef tx_port_ref = null;
+                                    Port tx_port = tx_instance.findRequiredByID(tx_port_id);
+                                    //if (tx_port != null) tx_port_ref = tx_port.getPortTypeRef();
+                                    
+                                    //PortTypeRef rcv_port_ref = null;
+                                    Port rcv_port = rcv_instance.findProvidedByID(rcv_port_id);
+                                    //if (rcv_port != null) rcv_port_ref = rcv_port.getPortTypeRef();
+                                    
+                                    if( (tx_port != null) && (rcv_port != null)) {
+                                        // Do something
+                                        String channel_name = "" + tx_iid + "_" + tx_port_id + "_" + rcv_iid + "_" + rcv_port_id;  // TODO  make this convention more robust
+                                        System.err.println("Try to find a channel with name <" + channel_name + ">");
+                                        
+                                        Channel ch_instance = r.findHubsByID(channel_name);
+                                        if (ch_instance == null) {
+                                            System.err.println("Found component and ports ... creating channel <" + channel_name + ">");
+                                            ch_instance = factory.createChannel();
+                                            ch_instance.setName(channel_name);
+                                            MBinding mb = factory.createMBinding();
+                                            mb.setHub(ch_instance);
+                                            mb.setPort(tx_port);
+                                            MBinding mb2 = factory.createMBinding();
+                                            mb2.setHub(ch_instance);
+                                            mb2.setPort(rcv_port);
+                                            List<MBinding> mbs = new ArrayList<MBinding>();
+                                            mbs.add(mb);
+                                            mbs.add(mb2);
+                                            ch_instance.addAllBindings(mbs);
+                                            r.addHubs(ch_instance);
+                                        } else {
+                                            System.err.println("Found channel named <" + ch_instance.getName() + "> object:" + ch_instance);
+                                        }
+                                        // Find if channel
+                                    } else {
+                                        System.err.println("Component ports not found ... channel skipped");
+                                        System.err.println("tx_port=" + tx_port);
+                                        System.err.println("rcv_port=" + rcv_port);
+                                    }
+                                } else {
+                                    System.err.println("Component instances not found ... channel skipped");
+                                    System.err.println("tx_instance=" + tx_instance);
+                                    System.err.println("rcv_instance=" + rcv_instance);
+                                }
+                        }
 
 			if (data.startsWith("Task type=") && data.contains("instance=")) {
 				String[] s1 = data.replace("Task type=", "").replace("instance=", "").replace("state=", "").split(" ");				
