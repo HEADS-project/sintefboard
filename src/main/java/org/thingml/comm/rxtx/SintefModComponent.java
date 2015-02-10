@@ -591,11 +591,22 @@ public class SintefModComponent implements ModelListener, Runnable,
 				TypeDefinition t  =r.findPackagesByID("sintef").findTypeDefinitionsByID(tid);
 				ComponentInstance instance = r.findNodesByID("MySintefNode").findComponentsByID(iid);
 				
-				System.err.println(t);
-				System.err.println(instance);
+                                if (t==null) {
+                                    t = factory.createTypeDefinition();
+                                    t.setName(tid);
+                                    
+                                    r.findPackagesByID("sintef").addTypeDefinitions(t);
+                                }
+                                if (instance==null) {
+                                    instance = factory.createComponentInstance();
+                                    instance.setTypeDefinition(t);
+                                    instance.setName(iid);
+                                    
+                                    r.findNodesByID("MySintefNode").addComponents(instance);
+                                }
 
-				
-				
+				System.err.println("Type def=" + t);
+				System.err.println("Type inst=" + instance);
 				
 			}
 			
@@ -626,6 +637,8 @@ public class SintefModComponent implements ModelListener, Runnable,
 				}
 
 				p.addTypeDefinitions(tf1);
+                                
+                                System.err.println("Component type= "+ tf1);
 			}
 			if (data.equals("End of listing") && r != null) {
 
