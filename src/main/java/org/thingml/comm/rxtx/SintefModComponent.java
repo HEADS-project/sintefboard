@@ -627,6 +627,8 @@ public class SintefModComponent implements ModelListener, Runnable,
                             mb2.setPort(rcv_port);
                             ch_instance.addBindings(mb2);
 
+                            r.addMBindings(mb);
+                            r.addMBindings(mb2);
                             r.addHubs(ch_instance);
                         } else {
                             System.err.println("Found channel named <" + ch_instance.getName() + "> object:" + ch_instance);
