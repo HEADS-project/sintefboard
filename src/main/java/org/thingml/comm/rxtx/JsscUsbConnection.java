@@ -6,6 +6,8 @@ package org.thingml.comm.rxtx;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.thingml.comm.rxtx.serial.SerialObserver;
+import org.thingml.comm.rxtx.serial.SerialPortReader;
 
 /**
  *
