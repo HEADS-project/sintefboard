@@ -26,7 +26,7 @@ public class Adaptations2Commands {
     public Set<SerialCommand> process(AdaptationModel model) {
         Set<SerialCommand> cmds = new TreeSet<SerialCommand>(new Comparator<SerialCommand>() {
             public int compare(SerialCommand o1, SerialCommand o2) {
-                return o1.priority() - o2.priority();
+                return o2.priority() - o1.priority();
             }
         });
 
