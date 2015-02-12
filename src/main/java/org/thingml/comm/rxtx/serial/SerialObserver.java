@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.thingml.comm.rxtx;
+package org.thingml.comm.rxtx.serial;
 
 /**
  * Created by bmori on 08.05.2014.
@@ -21,5 +21,4 @@ package org.thingml.comm.rxtx;
 public interface SerialObserver {
 
     void receive(String data);
-
 }
