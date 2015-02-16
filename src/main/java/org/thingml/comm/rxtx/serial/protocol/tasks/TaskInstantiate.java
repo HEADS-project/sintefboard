@@ -13,6 +13,7 @@ public class TaskInstantiate implements SerialCommand {
     public TaskInstantiate(String type, String name) {
         this.type = type;
         this.name = name;
+        System.err.println("TaskInstantiate("+type+","+name+")");
     }
 
     public String getType() {

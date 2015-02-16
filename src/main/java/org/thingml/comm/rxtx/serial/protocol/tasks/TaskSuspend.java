@@ -27,6 +27,6 @@ public class TaskSuspend implements SerialCommand {
     }
 
     public int priority() {
-        return 0;
+        return 10;
     }
 }

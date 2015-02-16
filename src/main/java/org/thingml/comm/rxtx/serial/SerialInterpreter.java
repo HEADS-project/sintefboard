@@ -26,18 +26,30 @@ public class SerialInterpreter implements SerialObserver {
         scanState = ScanStates.IDLE;
     }
     
-    public void interruptInterpreter() {
+    synchronized public void resetInterpreter() {
+        System.err.println("resetInterpreter()");
         scanState = ScanStates.INTERRUPTED;
     }
 
-    public void receive(String data) {
+    synchronized public void receive(String data) {
         Log.info("{} PROMPT " + data);
         if (!data.startsWith("HEADS->norm>")) {
             if (data.equals("Listing of current task instances")) {
-                scanState = ScanStates.TASK_INSTANCE_START;
-                InitForNewScan();
+                if (scanState == ScanStates.INTERRUPTED) {
+                    System.err.println("receive() skip scan after resetInterpreter()");
+                    scanState = ScanStates.IDLE;
+                } else {
+                    scanState = ScanStates.TASK_INSTANCE_START;
+                    InitForNewScan();
+                }
             }
-            
+
+            if (scanState == ScanStates.INTERRUPTED) 
+                return;
+
+            if (scanState == ScanStates.IDLE) 
+                return;
+
             if (data.equals("End of task instance listing")) {
                 if (scanState == ScanStates.TASK_INSTANCE_START) {
                     scanState = ScanStates.TASK_INSTANCE_END;
@@ -107,7 +119,7 @@ public class SerialInterpreter implements SerialObserver {
         }
     }
 
-    private void InitForNewScan() {
+    synchronized private void InitForNewScan() {
         rx_pkg = factory.createPackage();
         rx_pkg.setName("sintef");
 
@@ -148,7 +160,7 @@ public class SerialInterpreter implements SerialObserver {
         n.setGroups(rx_root.getGroups());
     }
     
-    private void ProcessLineIfTaskInstance(String data) {
+    synchronized private void ProcessLineIfTaskInstance(String data) {
         if (data.startsWith("Task type=") && data.contains("instance=")) {
             String[] s1 = data.replace("Task type=", "").replace("instance=", "").replace("state=", "").split(" ");
             String tid = s1[0];
@@ -176,7 +188,7 @@ public class SerialInterpreter implements SerialObserver {
         }
     }
     
-    private void ProcessLineIfTaskType(String data) {
+    synchronized private void ProcessLineIfTaskType(String data) {
         if (data.startsWith("Task type=") && !data.contains("instance=")) {
             String componentTypeName = data.subSequence(
                     data.indexOf("=") + 1, data.length() - 1).toString();
@@ -209,7 +221,7 @@ public class SerialInterpreter implements SerialObserver {
         }
     }
     
-    private void ProcessLineIfChannel(String data) {
+    synchronized private void ProcessLineIfChannel(String data) {
         if (data.startsWith("Taskinstance=") && data.contains("port=")) {
             String[] s1 = data.replace("Taskinstance=", "").replace("port=", "").replace("==>", "").split(" ");
             String tx_iid = s1[0];

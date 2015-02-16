@@ -13,6 +13,6 @@ public class TaskList implements SerialCommand {
     }
 
     public int priority() {
-        return -1;
+        return 1;
     }
 }

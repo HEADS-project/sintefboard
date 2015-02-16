@@ -13,6 +13,6 @@ public class ChannelList implements SerialCommand {
     }
 
     public int priority() {
-        return -1;
+        return 2;
     }
 }

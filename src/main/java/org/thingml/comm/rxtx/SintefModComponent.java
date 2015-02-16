@@ -1,5 +1,6 @@
 package org.thingml.comm.rxtx;
 
+import java.util.Iterator;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.kevoree.annotation.*;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class SintefModComponent implements ModelListener {
 
     @Param(defaultValue = "/dev/ttyACM0")
-    String serialport;
+    String serialportname;
 
     @Param(defaultValue = "100")
     Long delay;
@@ -42,32 +43,32 @@ public class SintefModComponent implements ModelListener {
     private AdaptationEngine adaptationEngine = new AdaptationEngine();
     private Adaptations2Commands adaptations2Commands = new Adaptations2Commands();
     private ScheduledExecutorService service;
-    private SerialPort serialPort;
+    private SerialPort serialLink;
     private AdaptationModel adaptationModel;
     private SerialInterpreter interpreter;
 
     @Start
     public void start() {
         Log.info("{} start() enter", context.getInstanceName());
-        serialPort = new SerialPort(this.serialport);
+        serialLink = new SerialPort(this.serialportname);
 
         try {
-            Log.info("{} port open {}", context.getInstanceName(), serialPort.openPort());// Open
+            Log.info("{} port open {}", context.getInstanceName(), serialLink.openPort());// Open
             // port
-            serialPort.setParams(SerialPort.BAUDRATE_115200,
+            serialLink.setParams(SerialPort.BAUDRATE_115200,
                     SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
                     SerialPort.PARITY_NONE);
 
             int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS
                     + SerialPort.MASK_DSR;// Prepare mask
-            serialPort.setEventsMask(mask);// Set mask
+            serialLink.setEventsMask(mask);// Set mask
             interpreter = new SerialInterpreter(modelService);
-            //serialPort.addEventListener(new SerialPortReader(serialPort, interpreter);
+            serialLink.addEventListener(new SerialPortReader(serialLink, interpreter));
         } catch (SerialPortException ex) {
             Log.info(ex.getMessage());
         }
         try {
-            serialPort.writeBytes("\r\n".getBytes());
+            serialLink.writeBytes("\r\n".getBytes());
         } catch (SerialPortException e) {
             Log.error("Unable to write to serial port (reason: {})", e.getMessage());
         }
@@ -76,8 +77,8 @@ public class SintefModComponent implements ModelListener {
         service.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 try {
-                    serialPort.writeBytes("task list \r\n".getBytes());
-                    serialPort.writeBytes("channel list \r\n".getBytes());
+                    serialLink.writeBytes("task list \r\n".getBytes());
+                    serialLink.writeBytes("channel list \r\n".getBytes());
                 } catch (SerialPortException e) {
                     Log.error("Unable to write to serial port (reason: {})", e.getMessage());
                 }
@@ -92,9 +93,9 @@ public class SintefModComponent implements ModelListener {
         Log.info("{} stop() enter", context.getInstanceName());
         service.shutdownNow();
         try {
-            serialPort.writeBytes("reset\r\n".getBytes());
+            serialLink.writeBytes("reset\r\n".getBytes());
             Log.info("{} Sent reset wait to get the board restarted...");
-            serialPort.closePort();
+            serialLink.closePort();
 
             try {
                 Thread.sleep(5000);                 //1000 milliseconds is one second.
@@ -124,12 +125,15 @@ public class SintefModComponent implements ModelListener {
     }
 
     public void modelUpdated() {
-        Set<SerialCommand> cmds = adaptations2Commands.process(adaptationModel);
-        for (SerialCommand cmd : cmds) {
+        List<SerialCommand> cmds = adaptations2Commands.process(adaptationModel);
+        Iterator<SerialCommand> it = cmds.iterator();
+        SerialCommand cmd;
+        while (it.hasNext()) {
             try {
-                System.err.println("Send-to-serial:<" + cmd.toString() + ">");
-                interpreter.interruptInterpreter(); // Tell the interpreter.receiver that the board is reconfigured
-                serialPort.writeBytes(cmd.toString().getBytes());
+                cmd = it.next();
+                System.err.println("Send-to-serial: ("+cmd.priority()+")<" + cmd.toString() + ">");
+                interpreter.resetInterpreter(); // Tell the interpreter.receiver that the board is reconfigured
+                serialLink.writeBytes(cmd.toString().getBytes());
             } catch (SerialPortException e) {
                 Log.error("Unable to write to serial port (reason: {})", e.getMessage());
             }

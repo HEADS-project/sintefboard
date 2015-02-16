@@ -11,6 +11,7 @@ public class TaskResume implements SerialCommand {
 
     public TaskResume(String name) {
         this.name = name;
+        System.err.println("TaskResume("+name+")");
     }
 
     public String getName() {

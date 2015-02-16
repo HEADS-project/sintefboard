@@ -1,5 +1,15 @@
-add node0: JavaNode
-add node0.comp: org.thingml.comm.rxtx.SintefModComponent
-add sync: WSGroup
+//sample of KevScript configuration
+repo "http://repo1.maven.org/maven2"
+add node0 : JavaNode/5.2.3-SNAPSHOT
+add node0.comp804 : SintefModComponent/1.0.0-SNAPSHOT
+add sync : WSGroup/5.2.3-SNAPSHOT
+//add MySintefNode : sintef.sintefnodetype
+//add MySintefNode.comp465 : sintef.rxlcd
+//add MySintefNode.comp602 : sintef.sender
 
+set node0.comp804.serialportname = "COM3"
 attach node0 sync
+
+//add chan670 : sintef.sintefchannel
+//bind MySintefNode.comp602.tx0 chan670
+//bind MySintefNode.comp465.rcv0 chan670

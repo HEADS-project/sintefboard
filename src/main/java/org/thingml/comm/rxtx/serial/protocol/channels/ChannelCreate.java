@@ -18,6 +18,7 @@ public class ChannelCreate implements SerialCommand {
         this.id0 = id0;
         this.name1 = name1;
         this.id1 = id1;
+        System.err.println("ChannelCreate("+name0+","+id0+","+name1+","+id1+")");
     }
 
     public String getName0() {

@@ -13,6 +13,6 @@ public class TaskCreate implements SerialCommand {
     }
 
     public int priority() {
-        return 6;
+        return 20;
     }
 }
