@@ -43,6 +43,7 @@ public class SintefModComponent implements ModelListener {
     private ScheduledExecutorService service;
     private SerialPort serialPort;
     private AdaptationModel adaptationModel;
+    private SerialInterpreter interpreter;
 
     @Start
     public void start() {
@@ -59,7 +60,8 @@ public class SintefModComponent implements ModelListener {
             int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS
                     + SerialPort.MASK_DSR;// Prepare mask
             serialPort.setEventsMask(mask);// Set mask
-            serialPort.addEventListener(new SerialPortReader(serialPort, new SerialInterpreter()));
+            interpreter = new SerialInterpreter(modelService);
+            //serialPort.addEventListener(new SerialPortReader(serialPort, interpreter);
         } catch (SerialPortException ex) {
             Log.info(ex.getMessage());
         }
@@ -124,6 +126,8 @@ public class SintefModComponent implements ModelListener {
         List<SerialCommand> cmds = adaptations2Commands.process(adaptationModel);
         for (SerialCommand cmd : cmds) {
             try {
+                System.err.println("Send-to-serial:<" + cmd.toString() + ">");
+                interpreter.interruptInterpreter(); // Tell the interpreter.receiver that the board is reconfigured
                 serialPort.writeBytes(cmd.toString().getBytes());
             } catch (SerialPortException e) {
                 Log.error("Unable to write to serial port (reason: {})", e.getMessage());
