@@ -35,4 +35,8 @@ public class TaskInstantiate implements SerialCommand {
     public String toString() {
         return "task instantiate " + this.type + " " + this.name + "\r\n";
     }
+
+    public int priority() {
+        return 5;
+    }
 }

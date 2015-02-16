@@ -11,4 +11,8 @@ public class ChannelList implements SerialCommand {
     public String toString() {
         return "channel list\r\n";
     }
+
+    public int priority() {
+        return -1;
+    }
 }

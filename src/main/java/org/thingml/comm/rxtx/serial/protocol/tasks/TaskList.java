@@ -11,4 +11,8 @@ public class TaskList implements SerialCommand {
     public String toString() {
         return "task list\r\n";
     }
+
+    public int priority() {
+        return -1;
+    }
 }

@@ -56,4 +56,8 @@ public class ChannelDelete implements SerialCommand {
     public String toString() {
         return "channel delete " + this.name0 + " " + this.id0 + " " + this.name1 + " " + this.id1 + "\r\n";
     }
+
+    public int priority() {
+        return 1;
+    }
 }

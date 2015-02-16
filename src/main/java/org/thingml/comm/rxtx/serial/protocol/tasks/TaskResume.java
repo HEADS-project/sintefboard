@@ -25,4 +25,8 @@ public class TaskResume implements SerialCommand {
     public String toString() {
         return "task resume " + this.name + "\r\n";
     }
+
+    public int priority() {
+        return 11;
+    }
 }

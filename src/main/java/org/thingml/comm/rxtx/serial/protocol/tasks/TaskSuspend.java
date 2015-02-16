@@ -25,4 +25,8 @@ public class TaskSuspend implements SerialCommand {
     public String toString() {
         return "task suspend " + this.name + "\r\n";
     }
+
+    public int priority() {
+        return 0;
+    }
 }

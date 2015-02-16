@@ -56,4 +56,8 @@ public class ChannelCreate implements SerialCommand {
     public String toString() {
         return "channel create " + this.name0 + " " + this.id0 + " " + this.name1 + " " + this.id1 + "\r\n";
     }
+
+    public int priority() {
+        return 8;
+    }
 }

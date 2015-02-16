@@ -11,4 +11,8 @@ public class TaskCreate implements SerialCommand {
     public String toString() {
         return "task create\r\n";
     }
+
+    public int priority() {
+        return 6;
+    }
 }

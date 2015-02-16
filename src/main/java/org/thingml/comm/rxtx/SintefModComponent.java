@@ -16,6 +16,7 @@ import org.thingml.comm.rxtx.serial.SerialPortReader;
 import org.thingml.comm.rxtx.serial.protocol.SerialCommand;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -123,7 +124,7 @@ public class SintefModComponent implements ModelListener {
     }
 
     public void modelUpdated() {
-        List<SerialCommand> cmds = adaptations2Commands.process(adaptationModel);
+        Set<SerialCommand> cmds = adaptations2Commands.process(adaptationModel);
         for (SerialCommand cmd : cmds) {
             try {
                 System.err.println("Send-to-serial:<" + cmd.toString() + ">");

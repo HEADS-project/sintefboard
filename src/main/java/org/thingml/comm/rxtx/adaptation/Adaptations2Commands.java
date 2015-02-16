@@ -16,16 +16,20 @@ import org.thingml.comm.rxtx.serial.protocol.tasks.TaskInstantiate;
 import org.thingml.comm.rxtx.serial.protocol.tasks.TaskResume;
 import org.thingml.comm.rxtx.serial.protocol.tasks.TaskSuspend;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by leiko on 11/02/15.
  */
 public class Adaptations2Commands {
 
-    public List<SerialCommand> process(AdaptationModel model) {
-        List<SerialCommand> cmds = new ArrayList<SerialCommand>();
+    public Set<SerialCommand> process(AdaptationModel model) {
+        Set<SerialCommand> cmds = new TreeSet<SerialCommand>(new Comparator<SerialCommand>() {
+            public int compare(SerialCommand o1, SerialCommand o2) {
+                return o2.priority() - o1.priority();
+            }
+        });
+
         if (model != null) {
             for (AdaptationPrimitive p : model.getAdaptations()) {
                 if (p.getPrimitiveType().equals(AdaptationType.AddInstance.name())) {
