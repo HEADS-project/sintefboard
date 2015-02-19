@@ -17,6 +17,7 @@ import org.thingml.comm.rxtx.serial.protocol.tasks.TaskResume;
 import org.thingml.comm.rxtx.serial.protocol.tasks.TaskSuspend;
 
 import java.util.*;
+import org.kevoree.pmodeling.api.KMFContainer;
 
 /**
  * Created by leiko on 11/02/15.
@@ -30,17 +31,22 @@ public class Adaptations2Commands {
         if (model != null) {
             for (AdaptationPrimitive p : model.getAdaptations()) {
                 loopCount++;
-                System.err.println("loopCount " + loopCount + " adaptation : " + p.getPrimitiveType().toString());
+                System.err.println("loopCount " + loopCount + " primitive : " + p.getPrimitiveType().toString());
+                System.err.println("loopCount " + loopCount + " model entity : " + ((KMFContainer)p.getRef()).path());
                 
                 if (p.getPrimitiveType().equals(AdaptationType.AddInstance.name())) {
-                    System.err.println("If AddInstance..." + loopCount);
-                    cmds.add(new TaskInstantiate(
-                            ((ComponentInstance) p.getRef()).getTypeDefinition().getName(),
-                            ((ComponentInstance) p.getRef()).getName()
-                    ));
+                    if ( p.getRef() instanceof ComponentInstance) {
+                        System.err.println("If AddInstance..." + loopCount);
+                        cmds.add(new TaskInstantiate(
+                                ((ComponentInstance) p.getRef()).getTypeDefinition().getName(),
+                                ((ComponentInstance) p.getRef()).getName()
+                        ));
+                    }
 
                 } else if (p.getPrimitiveType().equals(AdaptationType.RemoveInstance.name())) {
-                    System.err.println("If RemoveInstance..." + loopCount);
+                    if ( p.getRef() instanceof ComponentInstance) {
+                        System.err.println("If RemoveInstance..." + loopCount);
+                    }
                     // TODO
 
                 } else if (p.getPrimitiveType().equals(AdaptationType.AddBinding.name())) {
@@ -87,12 +93,16 @@ public class Adaptations2Commands {
                         ));
                     }
                 } else if (p.getPrimitiveType().equals(AdaptationType.StartInstance.name())) {
-                    System.err.println("If StartInstance..." + loopCount);
-                    cmds.add(new TaskResume(((ComponentInstance) p.getRef()).getName()));
+                    if ( p.getRef() instanceof ComponentInstance) {
+                        System.err.println("If StartInstance..." + loopCount);
+                        cmds.add(new TaskResume(((ComponentInstance) p.getRef()).getName()));
+                    }
 
                 } else if (p.getPrimitiveType().equals(AdaptationType.StopInstance.name())) {
-                    System.err.println("If StopInstance..." + loopCount);
-                    cmds.add(new TaskSuspend(((ComponentInstance) p.getRef()).getName()));
+                    if ( p.getRef() instanceof ComponentInstance) {
+                        System.err.println("If StopInstance..." + loopCount);
+                        cmds.add(new TaskSuspend(((ComponentInstance) p.getRef()).getName()));
+                    }
                 }
                 System.err.println("Loop next..." + loopCount);
             }

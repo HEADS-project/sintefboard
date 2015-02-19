@@ -179,6 +179,7 @@ public class SerialInterpreter implements SerialObserver {
                 instance = factory.createComponentInstance();
                 instance.setTypeDefinition(t);
                 instance.setName(iid);
+                instance.setStarted(started);
 
                 rx_root.findNodesByID("MySintefNode").addComponents(instance);
             }
