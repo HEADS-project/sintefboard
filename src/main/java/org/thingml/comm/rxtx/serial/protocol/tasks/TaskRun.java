@@ -5,12 +5,13 @@ import org.thingml.comm.rxtx.serial.protocol.SerialCommand;
 /**
  * Created by leiko on 11/02/15.
  */
-public class TaskSuspend implements SerialCommand {
+public class TaskRun implements SerialCommand {
 
     private String name;
 
-    public TaskSuspend(String name) {
+    public TaskRun(String name) {
         this.name = name;
+        System.err.println("TaskRun("+name+")");
     }
 
     public String getName() {
@@ -23,10 +24,10 @@ public class TaskSuspend implements SerialCommand {
 
     @Override
     public String toString() {
-        return "task suspend " + this.name + "\r\n";
+        return "task run " + this.name + "\r\n";
     }
 
     public int priority() {
-        return 10;
+        return 20;
     }
 }

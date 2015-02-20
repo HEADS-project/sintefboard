@@ -46,11 +46,13 @@ public class SintefModComponent implements ModelListener {
     private SerialPort serialLink;
     private AdaptationModel adaptationModel;
     private SerialInterpreter interpreter;
+    private ChannelChecker channelChecker;
 
     @Start
     public void start() {
         Log.info("{} start() enter", context.getInstanceName());
         serialLink = new SerialPort(this.serialportname);
+        channelChecker = new ChannelChecker();
 
         try {
             Log.info("{} port open {}", context.getInstanceName(), serialLink.openPort());// Open
@@ -62,7 +64,7 @@ public class SintefModComponent implements ModelListener {
             int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS
                     + SerialPort.MASK_DSR;// Prepare mask
             serialLink.setEventsMask(mask);// Set mask
-            interpreter = new SerialInterpreter(modelService);
+            interpreter = new SerialInterpreter(modelService, channelChecker);
             serialLink.addEventListener(new SerialPortReader(serialLink, interpreter));
         } catch (SerialPortException ex) {
             Log.info(ex.getMessage());
@@ -77,8 +79,10 @@ public class SintefModComponent implements ModelListener {
         service.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 try {
-                    serialLink.writeBytes("task list \r\n".getBytes());
-                    serialLink.writeBytes("channel list \r\n".getBytes());
+                    String requestString = interpreter.getRequestString();
+                    serialLink.writeBytes(requestString.getBytes());
+                    //serialLink.writeBytes("task list \r\n".getBytes());
+                    //serialLink.writeBytes("channel list \r\n".getBytes());
                 } catch (SerialPortException e) {
                     Log.error("Unable to write to serial port (reason: {})", e.getMessage());
                 }
@@ -125,7 +129,7 @@ public class SintefModComponent implements ModelListener {
     }
 
     public void modelUpdated() {
-        List<SerialCommand> cmds = adaptations2Commands.process(adaptationModel);
+        List<SerialCommand> cmds = adaptations2Commands.process(adaptationModel, channelChecker);
         Iterator<SerialCommand> it = cmds.iterator();
         SerialCommand cmd;
         while (it.hasNext()) {

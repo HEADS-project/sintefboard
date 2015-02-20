@@ -5,13 +5,13 @@ import org.thingml.comm.rxtx.serial.protocol.SerialCommand;
 /**
  * Created by leiko on 11/02/15.
  */
-public class TaskResume implements SerialCommand {
+public class TaskStop implements SerialCommand {
 
     private String name;
 
-    public TaskResume(String name) {
+    public TaskStop(String name) {
         this.name = name;
-        System.err.println("TaskResume("+name+")");
+        System.err.println("TaskStop("+name+")");
     }
 
     public String getName() {
@@ -24,10 +24,10 @@ public class TaskResume implements SerialCommand {
 
     @Override
     public String toString() {
-        return "task resume " + this.name + "\r\n";
+        return "task stop " + this.name + "\r\n";
     }
 
     public int priority() {
-        return 11;
+        return 10;
     }
 }
