@@ -27,6 +27,7 @@ public class Adaptations2Commands {
     public List<SerialCommand> process(AdaptationModel model, ChannelChecker channelChecker) {
         int loopCount = -1;
         List<SerialCommand> cmds = new ArrayList<SerialCommand>();
+        channelChecker.prepareNewCommands();
 
         if (model != null) {
             for (AdaptationPrimitive p : model.getAdaptations()) {
@@ -36,7 +37,7 @@ public class Adaptations2Commands {
                 
                 if (p.getPrimitiveType().equals(AdaptationType.AddInstance.name())) {
                     if ( p.getRef() instanceof ComponentInstance) {
-                        System.err.println("If AddInstance..." + loopCount);
+                        //System.err.println("If AddInstance..." + loopCount);
                         cmds.add(new TaskInstantiate(
                                 ((ComponentInstance) p.getRef()).getTypeDefinition().getName(),
                                 ((ComponentInstance) p.getRef()).getName()
@@ -45,12 +46,12 @@ public class Adaptations2Commands {
 
                 } else if (p.getPrimitiveType().equals(AdaptationType.RemoveInstance.name())) {
                     if ( p.getRef() instanceof ComponentInstance) {
-                        System.err.println("If RemoveInstance..." + loopCount);
+                        System.err.println("If RemoveInstance...ERROR not supported" + loopCount);
                     }
                     // TODO
 
                 } else if (p.getPrimitiveType().equals(AdaptationType.AddBinding.name())) {
-                    System.err.println("If AddBinding..." + loopCount);
+                    //System.err.println("If AddBinding..." + loopCount);
 
                     Channel hub = ((MBinding) p.getRef()).getHub();
                     String hubName = hub.getName();
@@ -68,17 +69,17 @@ public class Adaptations2Commands {
                         String port1Name = port1.getPortTypeRef().getName();
                         String comp1Name = ((ComponentInstance) port1.eContainer()).getName();
 
-                        System.err.println("If AddBinding sintef..." + loopCount);
                         if (channelChecker.registerCommandAddBinding(comp0Name, port0Name, comp1Name, port1Name, hubName) == true) {
                             //cmds.add(new ChannelCreate(
                             //    comp0Name, port0Name.replace("tx", "").replace("rcv", ""),
                             //    comp1Name, port1Name.replace("tx", "").replace("rcv", "")
                             //));
+                            //System.err.println("If AddBinding sintef..." + loopCount);
                             cmds.add(new ChannelCreate(comp0Name, port0Name, comp1Name, port1Name));
                         }
                     }
                 } else if (p.getPrimitiveType().equals(AdaptationType.RemoveBinding.name())) {
-                    System.err.println("If RemoveBinding..." + loopCount);
+                    //System.err.println("If RemoveBinding..." + loopCount);
 
                     Channel hub = ((MBinding) p.getRef()).getHub();
                     String hubName = hub.getName();
@@ -96,24 +97,24 @@ public class Adaptations2Commands {
                         String port1Name = port1.getPortTypeRef().getName();
                         String comp1Name = ((ComponentInstance) port1.eContainer()).getName();
 
-                        System.err.println("If RemoveBinding sintef..." + loopCount);
                         if (channelChecker.registerCommandRemoveBinding(comp0Name, port0Name, comp1Name, port1Name, hubName) == true) {
                             //cmds.add(new ChannelDelete(
                             //    comp0Name, port0Name.replace("tx", "").replace("rcv", ""),
                             //    comp1Name, port1Name.replace("tx", "").replace("rcv", "")
                             //));
+                            //System.err.println("If RemoveBinding sintef..." + loopCount);
                             cmds.add(new ChannelDelete(comp0Name, port0Name,comp1Name, port1Name));
                         }
                     }
                 } else if (p.getPrimitiveType().equals(AdaptationType.StartInstance.name())) {
                     if ( p.getRef() instanceof ComponentInstance) {
-                        System.err.println("If StartInstance..." + loopCount);
+                        //System.err.println("If StartInstance..." + loopCount);
                         cmds.add(new TaskRun(((ComponentInstance) p.getRef()).getName()));
                     }
 
                 } else if (p.getPrimitiveType().equals(AdaptationType.StopInstance.name())) {
                     if ( p.getRef() instanceof ComponentInstance) {
-                        System.err.println("If StopInstance..." + loopCount);
+                        //System.err.println("If StopInstance..." + loopCount);
                         cmds.add(new TaskStop(((ComponentInstance) p.getRef()).getName()));
                     }
                 }

@@ -17,7 +17,6 @@ public class SerialInterpreter implements SerialObserver {
     private KevoreeFactory factory = new DefaultKevoreeFactory();
     private ModelService modelService;
     private ContainerRoot rx_root;
-    private org.kevoree.Package rx_pkg;
     private ChannelChecker channelChecker;
 
     private enum ScanStates { IDLE, INTERRUPTED, TASK_INSTANCE_START, TASK_INSTANCE_END, TASK_TYPE_START, TASK_TYPE_END, CHANNEL_START, CHANNEL_END, COMPLETED, FAILED};
@@ -133,6 +132,8 @@ public class SerialInterpreter implements SerialObserver {
     }
 
     synchronized private void InitForNewScan() {
+        org.kevoree.Package rx_pkg;
+        
         rx_pkg = factory.createPackage();
         rx_pkg.setName("sintef");
         channelChecker.prepareNewInterpretion();
@@ -159,7 +160,7 @@ public class SerialInterpreter implements SerialObserver {
         tf1.setVersion("1.0.0");
         tf1.addDeployUnits(du1);
 
-        rx_pkg.addTypeDefinitions(tf);
+        //rx_pkg.addTypeDefinitions(tf);
         rx_pkg.addTypeDefinitions(tf1);
 
         ContainerNode n = factory.createContainerNode();
@@ -172,6 +173,47 @@ public class SerialInterpreter implements SerialObserver {
         rx_root.addPackages(rx_pkg);
         rx_root.addNodes(n);
         n.setGroups(rx_root.getGroups());
+        
+        FintAndPrintTypedef("End of InitForNewScan()");
+    }
+    
+    private void FintAndPrintTypedef(String pos){
+        System.err.println(" ********************************************************** " );
+        System.err.print(pos + " package deployUnits [ " );
+        for( DeployUnit du :rx_root.findPackagesByID("sintef").getDeployUnits()) {
+            System.err.print(du.getName() + " | " + du + " , ");
+        }
+        System.err.println( " ] ");
+        
+        System.err.println(pos + " package packages [ ");
+        for( Package du :rx_root.findPackagesByID("sintef").getPackages()) {
+            System.err.print(du.getName() + " | " + du + " , ");
+        }
+        System.err.println( " ] ");
+
+        System.err.println(pos + " package typeDefinitions [ ");
+        for( TypeDefinition du :rx_root.findPackagesByID("sintef").getTypeDefinitions()) {
+            System.err.print(du.getName() + " | " + du + " , ");
+        }
+        System.err.println( " ] ");
+        System.err.println(pos + " node componentInstances [ ");
+        for( ComponentInstance du :rx_root.findNodesByID("MySintefNode").getComponents()) {
+            System.err.print(du.getName() + " | " + du + " , ");
+        }
+        System.err.println( " ] ");
+        System.err.println(" ********************************************************** " );
+    }
+    
+    private TypeDefinition FindTypeDefinitionsByName(String name) {
+        TypeDefinition ret = null;
+        for( TypeDefinition def :rx_root.findPackagesByID("sintef").getTypeDefinitions()) {
+            if (def.getName().contentEquals(name)) {
+                ret = def;
+                System.err.println("FindTypeDefinitionsByName(" + name + ") found <" + def.getName() + "> | <" + def + ">");
+                break;
+            }
+        }
+        return ret;
     }
     
     synchronized private void ProcessLineIfTaskInstance(String data) {
@@ -181,7 +223,13 @@ public class SerialInterpreter implements SerialObserver {
             String iid = s1[1];
             boolean started = s1[2].equals("RUN");
             TypeDefinition t = rx_root.findPackagesByID("sintef").findTypeDefinitionsByID(tid);
+            TypeDefinition t2 = FindTypeDefinitionsByName(tid);
             ComponentInstance instance = rx_root.findNodesByID("MySintefNode").findComponentsByID(iid);
+            Log.info("{} Type def=" + t);
+            Log.info("{} Type inst=" + instance);
+
+            if (t == null) t = t2;
+            //FintAndPrintTypedef("Start of ProcessLineIfTaskInstance()");
 
             if (t == null) {
                 System.err.println("Task type <" + tid + "> not found ... creating");
@@ -201,19 +249,22 @@ public class SerialInterpreter implements SerialObserver {
                 rx_root.findNodesByID("MySintefNode").addComponents(instance);
             }
 
-            Log.info("{} Type def=" + t);
-            Log.info("{} Type inst=" + instance);
         }
     }
     
     synchronized private void ProcessLineIfTaskType(String data) {
         if (data.startsWith("Task type=") && !data.contains("instance=")) {
+            
+            org.kevoree.Package rx_pkg = rx_root.findPackagesByID("sintef");
+
             //String componentTypeName = data.subSequence(
             //        data.indexOf("=") + 1, data.length() - 1).toString();
             String[] s1 = data.replace("Task type=", "").split(" ");
             String componentTypeName = s1[0];
-            System.err.println("Found task type <" + s1[0] + ">");
+            //System.err.println("Found task type <" + s1[0] + ">");
             
+            //FintAndPrintTypedef("Start of ProcessLineIfTaskType()");
+
             org.kevoree.DeployUnit du1 = factory.createDeployUnit();
             du1.setName("sintef" + componentTypeName);
             du1.setVersion("1.0.0");
@@ -242,8 +293,8 @@ public class SerialInterpreter implements SerialObserver {
                 String role = ps.substring(0, ps.indexOf("(")).toUpperCase();
                 String name = ps.substring(ps.indexOf(":")+1);
                 
-                System.err.println("Found port info <" + ps + ">");
-                System.err.println("Found port role <" + role + "> name <" + name + ">");                
+                //System.err.println("Found port info <" + ps + ">");
+                //System.err.println("Found port role <" + role + "> name <" + name + ">");                
                 
                 PortTypeRef porttyperef = factory.createPortTypeRef();
                 porttyperef.setName(name);
@@ -256,11 +307,16 @@ public class SerialInterpreter implements SerialObserver {
             rx_pkg.addTypeDefinitions(tf1);
 
             Log.info("{} Component type= " + tf1);
+
+            //FintAndPrintTypedef("End of ProcessLineIfTaskType()");
         }
     }
     
     synchronized private void ProcessLineIfChannel(String data) {
         if (data.startsWith("Taskinstance=") && data.contains("port=")) {
+            
+            org.kevoree.Package rx_pkg = rx_root.findPackagesByID("sintef");
+            
             String[] s1 = data.replace("Taskinstance=", "").replace("port=", "").replace("==>", "").split(" ");
             String tx_iid = s1[0];
             String tx_port_id = s1[1];
@@ -271,11 +327,21 @@ public class SerialInterpreter implements SerialObserver {
 
             ComponentInstance tx_instance = rx_root.findNodesByID("MySintefNode").findComponentsByID(tx_iid);
             ComponentInstance rcv_instance = rx_root.findNodesByID("MySintefNode").findComponentsByID(rcv_iid);
+            Log.info("{} tx_comp =" + tx_instance);
+            Log.info("{} rcv_comp=" + rcv_instance);
+
+            //FintAndPrintTypedef("Start of ProcessLineIfChannel()");
+            
             if ((tx_instance != null) && (rcv_instance != null)) {
-                Port tx_port = tx_instance.findRequiredByID(tx_port_id);
+                Port tx_port  = tx_instance.findRequiredByID(tx_port_id);
+                if (tx_port == null) tx_port  = tx_instance.findProvidedByID(tx_port_id);
+                
+                Port rcv_port = rcv_instance.findRequiredByID(rcv_port_id);
+                if (rcv_port == null) rcv_port = rcv_instance.findProvidedByID(rcv_port_id);
 
-                Port rcv_port = rcv_instance.findProvidedByID(rcv_port_id);
-
+                Log.info("{} tx_port=" + tx_port);
+                Log.info("{} rcv_port=" + rcv_port);
+                
                 if ((tx_port != null) && (rcv_port != null)) {
                     // Do something
                     String channel_name = channelChecker.getChannelName(tx_iid, tx_port_id, rcv_iid, rcv_port_id);
