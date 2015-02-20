@@ -32,7 +32,9 @@ public class SerialInterpreter implements SerialObserver {
     public String getRequestString() {
         String ret = "";
         
-        ret = ret + "task list \r\n";
+        ret = ret + "info \r\n";
+        ret = ret + "task types \r\n";
+        ret = ret + "task active \r\n";
         ret = ret + "channel list \r\n";
         return ret;
     }
@@ -45,12 +47,12 @@ public class SerialInterpreter implements SerialObserver {
     synchronized public void receive(String data) {
         Log.info("{} PROMPT " + data);
         if (!data.startsWith("HEADS->norm>")) {
-            if (data.equals("Listing of current task instances")) {
+            if (data.equals("Listing of supported task types")) {
                 if (scanState == ScanStates.INTERRUPTED) {
                     System.err.println("receive() skip scan after resetInterpreter()");
                     scanState = ScanStates.IDLE;
                 } else {
-                    scanState = ScanStates.TASK_INSTANCE_START;
+                    scanState = ScanStates.TASK_TYPE_START;
                     InitForNewScan();
                 }
             }
@@ -61,24 +63,6 @@ public class SerialInterpreter implements SerialObserver {
             if (scanState == ScanStates.IDLE) 
                 return;
 
-            if (data.equals("End of task instance listing")) {
-                if (scanState == ScanStates.TASK_INSTANCE_START) {
-                    scanState = ScanStates.TASK_INSTANCE_END;
-                } else {
-                    System.err.println("receive() unexpected1 input sequence => ERROR");
-                    scanState = ScanStates.FAILED;
-                }
-            }
-        
-            if (data.equals("Listing of supported task types")) {
-                if (scanState == ScanStates.TASK_INSTANCE_END) {
-                    scanState = ScanStates.TASK_TYPE_START;
-                } else {
-                    System.err.println("receive() unexpected2 input sequence => ERROR");
-                    scanState = ScanStates.FAILED;
-                }
-            }
-    
             if (data.equals("End of task type listing")) {
                 if (scanState == ScanStates.TASK_TYPE_START) {
                     scanState = ScanStates.TASK_TYPE_END;
@@ -88,8 +72,26 @@ public class SerialInterpreter implements SerialObserver {
                 }
             }
 
-            if (data.equals("Listing of channels connected to current task instances")) {
+            if (data.equals("Listing of current task instances")) {
                 if (scanState == ScanStates.TASK_TYPE_END) {
+                    scanState = ScanStates.TASK_INSTANCE_START;
+                } else {
+                    System.err.println("receive() unexpected2 input sequence => ERROR");
+                    scanState = ScanStates.FAILED;
+                }
+            }
+
+            if (data.equals("End of task instance listing")) {
+                if (scanState == ScanStates.TASK_INSTANCE_START) {
+                    scanState = ScanStates.TASK_INSTANCE_END;
+                } else {
+                    System.err.println("receive() unexpected1 input sequence => ERROR");
+                    scanState = ScanStates.FAILED;
+                }
+            }
+        
+            if (data.equals("Listing of channels connected to current task instances")) {
+                if (scanState == ScanStates.TASK_INSTANCE_END) {
                     scanState = ScanStates.CHANNEL_START;
                 } else {
                     System.err.println("receive() unexpected4 input sequence => ERROR");
@@ -182,12 +184,14 @@ public class SerialInterpreter implements SerialObserver {
             ComponentInstance instance = rx_root.findNodesByID("MySintefNode").findComponentsByID(iid);
 
             if (t == null) {
+                System.err.println("Task type <" + tid + "> not found ... creating");
                 t = factory.createTypeDefinition();
                 t.setName(tid);
 
                 rx_root.findPackagesByID("sintef").addTypeDefinitions(t);
             }
             if (instance == null) {
+                System.err.println("Task instance <" + iid + "> not found ... creating");
                 instance = factory.createComponentInstance();
                 instance.setTypeDefinition(t);
                 instance.setName(iid);
