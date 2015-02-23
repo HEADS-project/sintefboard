@@ -1,5 +1,6 @@
 package org.thingml.comm.rxtx.serial.protocol.tasks;
 
+import org.kevoree.log.Log;
 import org.thingml.comm.rxtx.serial.protocol.SerialCommand;
 
 /**
@@ -11,7 +12,7 @@ public class TaskRun implements SerialCommand {
 
     public TaskRun(String name) {
         this.name = name;
-        System.err.println("TaskRun("+name+")");
+        Log.info("TaskRun("+name+")");
     }
 
     public String getName() {

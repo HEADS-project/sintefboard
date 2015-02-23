@@ -1,5 +1,6 @@
 package org.thingml.comm.rxtx.serial.protocol.channels;
 
+import org.kevoree.log.Log;
 import org.thingml.comm.rxtx.serial.protocol.SerialCommand;
 
 /**
@@ -18,7 +19,7 @@ public class ChannelCreate implements SerialCommand {
         this.id0 = id0;
         this.name1 = name1;
         this.id1 = id1;
-        System.err.println("ChannelCreate("+name0+","+id0+","+name1+","+id1+")");
+        Log.info("ChannelCreate("+name0+","+id0+","+name1+","+id1+")");
     }
 
     public String getName0() {

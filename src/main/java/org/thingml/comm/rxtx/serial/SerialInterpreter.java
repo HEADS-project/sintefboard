@@ -22,6 +22,8 @@ public class SerialInterpreter implements SerialObserver {
     private enum ScanStates { IDLE, INTERRUPTED, TASK_INSTANCE_START, TASK_INSTANCE_END, TASK_TYPE_START, TASK_TYPE_END, CHANNEL_START, CHANNEL_END, COMPLETED, FAILED};
     private ScanStates scanState;
 
+    private final String compTypeVersionDefault = "1.0.0";
+
     public SerialInterpreter(ModelService modelService, ChannelChecker channelChecker) {
         this.modelService = modelService;
         this.channelChecker = channelChecker;
@@ -31,6 +33,12 @@ public class SerialInterpreter implements SerialObserver {
     public String getRequestString() {
         String ret = "";
         
+        if (scanState == ScanStates.INTERRUPTED) {
+            scanState = ScanStates.IDLE;
+            Log.info("getRequestString() skip scan after resetInterpreter()");
+            return ret;
+        }
+        
         ret = ret + "info \r\n";
         ret = ret + "task types \r\n";
         ret = ret + "task active \r\n";
@@ -39,7 +47,7 @@ public class SerialInterpreter implements SerialObserver {
     }
     
     synchronized public void resetInterpreter() {
-        System.err.println("resetInterpreter()");
+        //Log.info("resetInterpreter()");
         scanState = ScanStates.INTERRUPTED;
     }
 
@@ -48,7 +56,7 @@ public class SerialInterpreter implements SerialObserver {
         if (!data.startsWith("HEADS->norm>")) {
             if (data.equals("Listing of supported task types")) {
                 if (scanState == ScanStates.INTERRUPTED) {
-                    System.err.println("receive() skip scan after resetInterpreter()");
+                    Log.info("receive() skip scan after resetInterpreter()");
                     scanState = ScanStates.IDLE;
                 } else {
                     scanState = ScanStates.TASK_TYPE_START;
@@ -66,7 +74,7 @@ public class SerialInterpreter implements SerialObserver {
                 if (scanState == ScanStates.TASK_TYPE_START) {
                     scanState = ScanStates.TASK_TYPE_END;
                 } else {
-                    System.err.println("receive() unexpected3 input sequence => ERROR");
+                    Log.info("receive() unexpected3 input sequence => ERROR");
                     scanState = ScanStates.FAILED;
                 }
             }
@@ -75,7 +83,7 @@ public class SerialInterpreter implements SerialObserver {
                 if (scanState == ScanStates.TASK_TYPE_END) {
                     scanState = ScanStates.TASK_INSTANCE_START;
                 } else {
-                    System.err.println("receive() unexpected2 input sequence => ERROR");
+                    Log.info("receive() unexpected2 input sequence => ERROR");
                     scanState = ScanStates.FAILED;
                 }
             }
@@ -84,7 +92,7 @@ public class SerialInterpreter implements SerialObserver {
                 if (scanState == ScanStates.TASK_INSTANCE_START) {
                     scanState = ScanStates.TASK_INSTANCE_END;
                 } else {
-                    System.err.println("receive() unexpected1 input sequence => ERROR");
+                    Log.info("receive() unexpected1 input sequence => ERROR");
                     scanState = ScanStates.FAILED;
                 }
             }
@@ -93,7 +101,7 @@ public class SerialInterpreter implements SerialObserver {
                 if (scanState == ScanStates.TASK_INSTANCE_END) {
                     scanState = ScanStates.CHANNEL_START;
                 } else {
-                    System.err.println("receive() unexpected4 input sequence => ERROR");
+                    Log.info("receive() unexpected4 input sequence => ERROR");
                     scanState = ScanStates.FAILED;
                 }
             }
@@ -105,12 +113,12 @@ public class SerialInterpreter implements SerialObserver {
                         modelService.update(rx_root, new UpdateCallback() {
                             public void run(Boolean applied) {
                                 scanState = ScanStates.COMPLETED;
-                                System.err.println("End of channel listing call to modelService.update() => applied=" + applied);
+                                Log.info("End of channel listing call to modelService.update() => applied=" + applied);
                             }
                         });
                     }
                 } else {
-                    System.err.println("receive() unexpected5 input sequence => ERROR");
+                    Log.info("receive() unexpected5 input sequence => ERROR");
                     scanState = ScanStates.FAILED;
                 }
             }
@@ -204,42 +212,26 @@ public class SerialInterpreter implements SerialObserver {
         System.err.println(" ********************************************************** " );
     }
     
-    private TypeDefinition FindTypeDefinitionsByName(String name) {
-        TypeDefinition ret = null;
-        for( TypeDefinition def :rx_root.findPackagesByID("sintef").getTypeDefinitions()) {
-            if (def.getName().contentEquals(name)) {
-                ret = def;
-                System.err.println("FindTypeDefinitionsByName(" + name + ") found <" + def.getName() + "> | <" + def + ">");
-                break;
-            }
-        }
-        return ret;
-    }
-    
     synchronized private void ProcessLineIfTaskInstance(String data) {
         if (data.startsWith("Task type=") && data.contains("instance=")) {
             String[] s1 = data.replace("Task type=", "").replace("instance=", "").replace("state=", "").split(" ");
-            String tid = s1[0];
+            String tid = "name=" + s1[0] + ",version="+compTypeVersionDefault;
             String iid = s1[1];
             boolean started = s1[2].equals("RUN");
             TypeDefinition t = rx_root.findPackagesByID("sintef").findTypeDefinitionsByID(tid);
-            TypeDefinition t2 = FindTypeDefinitionsByName(tid);
             ComponentInstance instance = rx_root.findNodesByID("MySintefNode").findComponentsByID(iid);
-            Log.info("{} Type def=" + t);
-            Log.info("{} Type inst=" + instance);
-
-            if (t == null) t = t2;
-            //FintAndPrintTypedef("Start of ProcessLineIfTaskInstance()");
+            //Log.info("{} Type def(" + tid + ")=" + t);
+            //Log.info("{} Type inst=" + instance);
 
             if (t == null) {
-                System.err.println("Task type <" + tid + "> not found ... creating");
+                Log.info("Task type <" + tid + "> not found ... creating");
                 t = factory.createTypeDefinition();
                 t.setName(tid);
 
                 rx_root.findPackagesByID("sintef").addTypeDefinitions(t);
             }
             if (instance == null) {
-                System.err.println("Task instance <" + iid + "> not found ... creating");
+                Log.info("Task instance <" + iid + "> not found ... creating");
                 instance = factory.createComponentInstance();
                 instance.setTypeDefinition(t);
                 instance.setName(iid);
@@ -267,27 +259,14 @@ public class SerialInterpreter implements SerialObserver {
 
             org.kevoree.DeployUnit du1 = factory.createDeployUnit();
             du1.setName("sintef" + componentTypeName);
-            du1.setVersion("1.0.0");
+            du1.setVersion(compTypeVersionDefault);
             rx_pkg.addDeployUnits(du1);
 
             org.kevoree.ComponentType tf1 = factory.createComponentType();
             tf1.setName(componentTypeName);
-            tf1.setVersion("1.0.0");
+            tf1.setVersion(compTypeVersionDefault);
             tf1.addDeployUnits(du1);
 
-            //for (int j = 0; j < 6; j++) {
-            //    PortTypeRef porttyperef = factory.createPortTypeRef();
-            //    porttyperef.setName("rcv" + j);
-            //    porttyperef.setOptional(true);
-            //
-            //    tf1.addProvided(porttyperef);
-            //
-            //    PortTypeRef porttyperef1 = factory.createPortTypeRef();
-            //    porttyperef1.setName("tx" + j);
-            //    porttyperef1.setOptional(true);
-            //    tf1.addRequired(porttyperef1);
-            //}
-            
             for (int portIdx = 1; portIdx < s1.length; portIdx++) {
                 String ps = s1[portIdx];
                 String role = ps.substring(0, ps.indexOf("(")).toUpperCase();
@@ -306,9 +285,8 @@ public class SerialInterpreter implements SerialObserver {
 
             rx_pkg.addTypeDefinitions(tf1);
 
-            Log.info("{} Component type= " + tf1);
+            //Log.info("{} Component type= " + tf1);
 
-            //FintAndPrintTypedef("End of ProcessLineIfTaskType()");
         }
     }
     
@@ -322,13 +300,13 @@ public class SerialInterpreter implements SerialObserver {
             String tx_port_id = s1[1];
             String rcv_iid = s1[3];
             String rcv_port_id = s1[4];
-            Log.info("{} Got channel string<" + data + ">");
-            Log.info("{} Parsed to<" + tx_iid + "><" + tx_port_id + "><" + rcv_iid + "><" + rcv_port_id + ">");
+            //Log.info("{} Got channel string<" + data + ">");
+            //Log.info("{} Parsed to<" + tx_iid + "><" + tx_port_id + "><" + rcv_iid + "><" + rcv_port_id + ">");
 
             ComponentInstance tx_instance = rx_root.findNodesByID("MySintefNode").findComponentsByID(tx_iid);
             ComponentInstance rcv_instance = rx_root.findNodesByID("MySintefNode").findComponentsByID(rcv_iid);
-            Log.info("{} tx_comp =" + tx_instance);
-            Log.info("{} rcv_comp=" + rcv_instance);
+            //Log.info("{} tx_comp =" + tx_instance);
+            //Log.info("{} rcv_comp=" + rcv_instance);
 
             //FintAndPrintTypedef("Start of ProcessLineIfChannel()");
             
@@ -339,13 +317,13 @@ public class SerialInterpreter implements SerialObserver {
                 Port rcv_port = rcv_instance.findRequiredByID(rcv_port_id);
                 if (rcv_port == null) rcv_port = rcv_instance.findProvidedByID(rcv_port_id);
 
-                Log.info("{} tx_port=" + tx_port);
-                Log.info("{} rcv_port=" + rcv_port);
+                //Log.info("{} tx_port=" + tx_port);
+                //Log.info("{} rcv_port=" + rcv_port);
                 
                 if ((tx_port != null) && (rcv_port != null)) {
                     // Do something
                     String channel_name = channelChecker.getChannelName(tx_iid, tx_port_id, rcv_iid, rcv_port_id);
-                    Log.info("{} Try to find a channel with name <" + channel_name + ">");
+                    //Log.info("{} Try to find a channel with name <" + channel_name + ">");
 
                     Channel ch_instance = rx_root.findHubsByID(channel_name);
                     if (ch_instance == null) {
@@ -369,7 +347,7 @@ public class SerialInterpreter implements SerialObserver {
                         rx_root.addMBindings(mb2);
                         rx_root.addHubs(ch_instance);
                     } else {
-                        Log.info("{} Found channel named <" + ch_instance.getName() + "> object:" + ch_instance);
+                        //Log.info("{} Found channel named <" + ch_instance.getName() + "> object:" + ch_instance);
                     }
                     // Find if channel
                 } else {

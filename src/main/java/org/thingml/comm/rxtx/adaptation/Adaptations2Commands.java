@@ -32,8 +32,7 @@ public class Adaptations2Commands {
         if (model != null) {
             for (AdaptationPrimitive p : model.getAdaptations()) {
                 loopCount++;
-                System.err.println("loopCount " + loopCount + " primitive : " + p.getPrimitiveType().toString());
-                System.err.println("loopCount " + loopCount + " model entity : " + ((KMFContainer)p.getRef()).path());
+                //Log.info("loopCount " + loopCount + " primitive : " + p.getPrimitiveType().toString() + " model entity : " + ((KMFContainer)p.getRef()).path());
                 
                 if (p.getPrimitiveType().equals(AdaptationType.AddInstance.name())) {
                     if ( p.getRef() instanceof ComponentInstance) {
@@ -118,7 +117,7 @@ public class Adaptations2Commands {
                         cmds.add(new TaskStop(((ComponentInstance) p.getRef()).getName()));
                     }
                 }
-                System.err.println("Loop next..." + loopCount);
+                //Log.info("Loop next..." + loopCount);
             }
 
             // TODO Note from Max:

@@ -1,5 +1,6 @@
 package org.thingml.comm.rxtx.serial.protocol.tasks;
 
+import org.kevoree.log.Log;
 import org.thingml.comm.rxtx.serial.protocol.SerialCommand;
 
 /**
@@ -13,7 +14,7 @@ public class TaskInstantiate implements SerialCommand {
     public TaskInstantiate(String type, String name) {
         this.type = type;
         this.name = name;
-        System.err.println("TaskInstantiate("+type+","+name+")");
+        Log.info("TaskInstantiate("+type+","+name+")");
     }
 
     public String getType() {

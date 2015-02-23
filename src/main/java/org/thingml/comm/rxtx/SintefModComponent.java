@@ -135,7 +135,7 @@ public class SintefModComponent implements ModelListener {
         while (it.hasNext()) {
             try {
                 cmd = it.next();
-                System.err.println("Send-to-serial: ("+cmd.priority()+")<" + cmd.toString() + ">");
+                //Log.info("Send-to-serial: ("+cmd.priority()+")<" + cmd.toString() + ">");
                 interpreter.resetInterpreter(); // Tell the interpreter.receiver that the board is reconfigured
                 serialLink.writeBytes(cmd.toString().getBytes());
             } catch (SerialPortException e) {
