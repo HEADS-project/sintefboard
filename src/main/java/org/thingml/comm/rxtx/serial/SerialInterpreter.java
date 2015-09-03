@@ -143,12 +143,17 @@ public class SerialInterpreter implements SerialObserver {
         org.kevoree.Package rx_pkg;
         
         rx_pkg = factory.createPackage();
-        rx_pkg.setName("sintef");
+        rx_pkg.setName("sintefboard");
         channelChecker.prepareNewInterpretion();
 
+        org.kevoree.Value type = factory.createValue();
+        type.setName("platform");
+        type.setValue("sintefmod");
+		
         org.kevoree.DeployUnit du = factory.createDeployUnit();
         du.setName("sintefnodetype");
         du.setVersion("1.0.0");
+	du.addFilters(type);
         rx_pkg.addDeployUnits(du);
 
         TypeDefinition tf = factory.createNodeType();
@@ -158,13 +163,18 @@ public class SerialInterpreter implements SerialObserver {
 
         rx_pkg.addTypeDefinitions(tf);
 
+        org.kevoree.Value type1 = factory.createValue();
+        type1.setName("platform");
+        type1.setValue("sintefmod");
+
         org.kevoree.DeployUnit du1 = factory.createDeployUnit();
         du1.setName("sintefchannel");
         du1.setVersion("1.0.0");
+	du1.addFilters(type1);
         rx_pkg.addDeployUnits(du1);
 
         ChannelType tf1 = factory.createChannelType();
-        tf1.setName("sintefchannel");
+        tf1.setName("SintefChannel");
         tf1.setVersion("1.0.0");
         tf1.addDeployUnits(du1);
 
@@ -188,19 +198,19 @@ public class SerialInterpreter implements SerialObserver {
     private void FintAndPrintTypedef(String pos){
         System.err.println(" ********************************************************** " );
         System.err.print(pos + " package deployUnits [ " );
-        for( DeployUnit du :rx_root.findPackagesByID("sintef").getDeployUnits()) {
+        for( DeployUnit du :rx_root.findPackagesByID("sintefboard").getDeployUnits()) {
             System.err.print(du.getName() + " | " + du + " , ");
         }
         System.err.println( " ] ");
         
         System.err.println(pos + " package packages [ ");
-        for( Package du :rx_root.findPackagesByID("sintef").getPackages()) {
+        for( Package du :rx_root.findPackagesByID("sintefboard").getPackages()) {
             System.err.print(du.getName() + " | " + du + " , ");
         }
         System.err.println( " ] ");
 
         System.err.println(pos + " package typeDefinitions [ ");
-        for( TypeDefinition du :rx_root.findPackagesByID("sintef").getTypeDefinitions()) {
+        for( TypeDefinition du :rx_root.findPackagesByID("sintefboard").getTypeDefinitions()) {
             System.err.print(du.getName() + " | " + du + " , ");
         }
         System.err.println( " ] ");
@@ -218,7 +228,7 @@ public class SerialInterpreter implements SerialObserver {
             String tid = "name=" + s1[0] + ",version="+compTypeVersionDefault;
             String iid = s1[1];
             boolean started = s1[2].equals("RUN");
-            TypeDefinition t = rx_root.findPackagesByID("sintef").findTypeDefinitionsByID(tid);
+            TypeDefinition t = rx_root.findPackagesByID("sintefboard").findTypeDefinitionsByID(tid);
             ComponentInstance instance = rx_root.findNodesByID("MySintefNode").findComponentsByID(iid);
             //Log.info("{} Type def(" + tid + ")=" + t);
             //Log.info("{} Type inst=" + instance);
@@ -228,7 +238,7 @@ public class SerialInterpreter implements SerialObserver {
                 t = factory.createTypeDefinition();
                 t.setName(tid);
 
-                rx_root.findPackagesByID("sintef").addTypeDefinitions(t);
+                rx_root.findPackagesByID("sintefboard").addTypeDefinitions(t);
             }
             if (instance == null) {
                 Log.info("Task instance <" + iid + "> not found ... creating");
@@ -247,7 +257,7 @@ public class SerialInterpreter implements SerialObserver {
     synchronized private void ProcessLineIfTaskType(String data) {
         if (data.startsWith("Task type=") && !data.contains("instance=")) {
             
-            org.kevoree.Package rx_pkg = rx_root.findPackagesByID("sintef");
+            org.kevoree.Package rx_pkg = rx_root.findPackagesByID("sintefboard");
 
             //String componentTypeName = data.subSequence(
             //        data.indexOf("=") + 1, data.length() - 1).toString();
@@ -257,9 +267,14 @@ public class SerialInterpreter implements SerialObserver {
             
             //FintAndPrintTypedef("Start of ProcessLineIfTaskType()");
 
+            org.kevoree.Value type = factory.createValue();
+            type.setName("platform");
+            type.setValue("sintefmod");
+		
             org.kevoree.DeployUnit du1 = factory.createDeployUnit();
             du1.setName("sintef" + componentTypeName);
             du1.setVersion(compTypeVersionDefault);
+            du1.addFilters(type);
             rx_pkg.addDeployUnits(du1);
 
             org.kevoree.ComponentType tf1 = factory.createComponentType();
@@ -293,7 +308,7 @@ public class SerialInterpreter implements SerialObserver {
     synchronized private void ProcessLineIfChannel(String data) {
         if (data.startsWith("Taskinstance=") && data.contains("port=")) {
             
-            org.kevoree.Package rx_pkg = rx_root.findPackagesByID("sintef");
+            org.kevoree.Package rx_pkg = rx_root.findPackagesByID("sintefboard");
             
             String[] s1 = data.replace("Taskinstance=", "").replace("port=", "").replace("==>", "").split(" ");
             String tx_iid = s1[0];
