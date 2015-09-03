@@ -1,0 +1,669 @@
+{
+    "class": "root:org.kevoree.ContainerRoot@node0@/nodes[node0]/components[comp804]#100395695046134",
+    "generated_KMF_ID": "node0@/nodes[node0]/components[comp804]#100395695046134",
+    "nodes": [],
+    "repositories": [],
+    "hubs": [],
+    "mBindings": [],
+    "groups": [],
+    "packages": [
+        {
+            "class": "org.kevoree.Package@sintefboard",
+            "name": "sintefboard",
+            "packages": [],
+            "typeDefinitions": [
+                {
+                    "class": "org.kevoree.ComponentType@name=ThingMl,version=1.0.0",
+                    "abstract": "false",
+                    "name": "ThingMl",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefThingMl,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [],
+                    "provided": []
+                },
+                {
+                    "class": "org.kevoree.ComponentType@name=IrTemp,version=1.0.0",
+                    "abstract": "false",
+                    "name": "IrTemp",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefIrTemp,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx2",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx3",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx3",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx0",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx0",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx1",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ],
+                    "provided": []
+                },
+                {
+                    "class": "org.kevoree.ChannelType@name=sintefchannel,version=1.0.0",
+                    "upperFragments": "0",
+                    "abstract": "false",
+                    "upperBindings": "0",
+                    "lowerBindings": "0",
+                    "lowerFragments": "0",
+                    "name": "sintefchannel",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefchannel,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": []
+                },
+                {
+                    "class": "org.kevoree.ComponentType@name=Receiver,version=1.0.0",
+                    "abstract": "false",
+                    "name": "Receiver",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefReceiver,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [],
+                    "provided": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx4",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx4",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx5",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx5",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx2",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx3",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx3",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx0",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx0",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx1",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.ComponentType@name=CtrlPorts,version=1.0.0",
+                    "abstract": "false",
+                    "name": "CtrlPorts",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefCtrlPorts,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@ctrl_i2c",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "ctrl_i2c",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@ctrl_spi",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "ctrl_spi",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@ctrl_bt",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "ctrl_bt",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@ctrl_mob",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "ctrl_mob",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ],
+                    "provided": []
+                },
+                {
+                    "class": "org.kevoree.ComponentType@name=MinMax,version=1.0.0",
+                    "abstract": "false",
+                    "name": "MinMax",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefMinMax,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@max1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "max1",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@max2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "max2",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@min1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "min1",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@out1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "out1",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@min2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "min2",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@out2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "out2",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ],
+                    "provided": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@in1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "in1",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@in2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "in2",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.ComponentType@name=SetLed,version=1.0.0",
+                    "abstract": "false",
+                    "name": "SetLed",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefSetLed,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [],
+                    "provided": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@led2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "led2",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@led1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "led1",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.ComponentType@name=RxLcd,version=1.0.0",
+                    "abstract": "false",
+                    "name": "RxLcd",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefRxLcd,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [],
+                    "provided": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx2",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx3",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx3",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx0",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx0",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@rx1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "rx1",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.ComponentType@name=Sender,version=1.0.0",
+                    "abstract": "false",
+                    "name": "Sender",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefSender,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx2",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx3",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx3",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx0",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx0",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx1",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx4",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx4",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@tx5",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "tx5",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ],
+                    "provided": []
+                },
+                {
+                    "class": "org.kevoree.ComponentType@name=Limit,version=1.0.0",
+                    "abstract": "false",
+                    "name": "Limit",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefLimit,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": [],
+                    "required": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@limited1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "limited1",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@out1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "out1",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@limited2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "limited2",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@out2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "out2",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ],
+                    "provided": [
+                        {
+                            "class": "org.kevoree.PortTypeRef@in1",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "in1",
+                            "ref": [],
+                            "mappings": []
+                        },
+                        {
+                            "class": "org.kevoree.PortTypeRef@in2",
+                            "noDependency": "false",
+                            "optional": "true",
+                            "name": "in2",
+                            "ref": [],
+                            "mappings": []
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.NodeType@name=sintefnodetype,version=1.0.0",
+                    "abstract": "false",
+                    "name": "sintefnodetype",
+                    "version": "1.0.0",
+                    "deployUnits": [
+                        "/packages[sintefboard]/deployUnits[hashcode=,name=sintefnodetype,version=1.0.0]"
+                    ],
+                    "superTypes": [],
+                    "dictionaryType": [],
+                    "metaData": []
+                }
+            ],
+            "deployUnits": [
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefchannel,version=1.0.0",
+                    "name": "sintefchannel",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefReceiver,version=1.0.0",
+                    "name": "sintefReceiver",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefLimit,version=1.0.0",
+                    "name": "sintefLimit",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefIrTemp,version=1.0.0",
+                    "name": "sintefIrTemp",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefSender,version=1.0.0",
+                    "name": "sintefSender",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefSetLed,version=1.0.0",
+                    "name": "sintefSetLed",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefMinMax,version=1.0.0",
+                    "name": "sintefMinMax",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefThingMl,version=1.0.0",
+                    "name": "sintefThingMl",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefCtrlPorts,version=1.0.0",
+                    "name": "sintefCtrlPorts",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefRxLcd,version=1.0.0",
+                    "name": "sintefRxLcd",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                },
+                {
+                    "class": "org.kevoree.DeployUnit@hashcode=,name=sintefnodetype,version=1.0.0",
+                    "name": "sintefnodetype",
+                    "hashcode": "",
+                    "url": "",
+                    "version": "1.0.0",
+                    "requiredLibs": [],
+                    "filters": [
+                        {
+                            "class": "org.kevoree.Value@platform",
+                            "name": "platform",
+                            "value": "sintefmod"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

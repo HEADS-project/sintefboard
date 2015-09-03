@@ -1,0 +1,21 @@
+	
+1) Change SINTEFBOARD to Camel case
+
+2) Reload the model into editor
+
+3) Delete instances
+
+4) File->Save
+
+5) Clean model
+
+6) kevoree-registry post "path/to/your/model"
+
+7) 
+
+
+npm i -g kevoree-registry
+===
+kevoree-registry post --help
+
+add node : sintefboard.Sintefnodetype
