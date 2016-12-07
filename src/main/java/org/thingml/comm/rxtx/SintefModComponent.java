@@ -1,10 +1,8 @@
 package org.thingml.comm.rxtx;
 
-import java.util.Iterator;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.kevoree.annotation.*;
-import org.kevoree.api.BootstrapService;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.adaptation.AdaptationModel;
 import org.kevoree.api.handler.ModelListener;
@@ -16,13 +14,13 @@ import org.thingml.comm.rxtx.serial.SerialInterpreter;
 import org.thingml.comm.rxtx.serial.SerialPortReader;
 import org.thingml.comm.rxtx.serial.protocol.SerialCommand;
 
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@ComponentType
+@ComponentType(version = 1)
 public class SintefModComponent implements ModelListener {
 
     @Param(defaultValue = "/dev/ttyACM0")
